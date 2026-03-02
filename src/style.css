@@ -1,0 +1,31 @@
+:root {
+  font-family: Inter, "PingFang SC", "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #0f172a;
+  background-color: #f1f5f9;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(1200px 700px at 10% -20%, rgba(59, 130, 246, 0.16), transparent 55%),
+    radial-gradient(900px 600px at 110% 0%, rgba(56, 189, 248, 0.14), transparent 50%),
+    #f1f5f9;
+}
+
+#app {
+  width: 100%;
+}
