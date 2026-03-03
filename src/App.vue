@@ -255,9 +255,9 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, defineAsyncComponent, ref } from 'vue'
 import { useProgressStore } from './stores/useProgressStore'
-import StatsView from './components/StatsView.vue'
+const StatsView = defineAsyncComponent(() => import('./components/StatsView.vue'))
 
 const { state, scores, reset } = useProgressStore()
 const activePage = ref('daily')
