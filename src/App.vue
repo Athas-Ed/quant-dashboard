@@ -1,6 +1,25 @@
 <template>
   <div class="page-wrap">
     <main class="container">
+      <section class="section-card page-switch">
+        <button
+          class="btn"
+          :class="{ primary: activePage === 'daily' }"
+          @click="activePage = 'daily'"
+        >
+          录入页
+        </button>
+        <button
+          class="btn"
+          :class="{ primary: activePage === 'stats' }"
+          @click="activePage = 'stats'"
+        >
+          统计页
+        </button>
+      </section>
+
+      <StatsView v-if="activePage === 'stats'" />
+      <template v-else>
       <header class="header-card">
         <div>
           <h1>每日量化进度表</h1>
@@ -40,10 +59,27 @@
         <div class="panel-grid">
           <fieldset>
             <legend>一、英语（60分）</legend>
-            <label class="line-checkbox">
-              <input type="checkbox" v-model="state.english_words" />
-              <span>背新词 80 个（20分）</span>
-              <strong class="score-tag">{{ itemScores.englishWords }} 分</strong>
+            <label class="line-input">
+              <span>背单词（每组20个）</span>
+              <div class="stepper">
+                <input type="number" v-model.number="state.english_words_groups" min="0" step="1" />
+                <div class="stepper-buttons">
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('english_words_groups', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('english_words_groups', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                </div>
+              </div>
+              <small>每组 5 分，上限 20 分；当前 {{ itemScores.englishWords }} 分</small>
+            </label>
+            <label class="line-input">
+              <span>做真题练习（题）</span>
+              <div class="stepper">
+                <input type="number" v-model.number="state.english_exam_count" min="0" step="1" />
+                <div class="stepper-buttons">
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('english_exam_count', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('english_exam_count', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                </div>
+              </div>
+              <small>每题 5 分，上限 30 分；当前 {{ itemScores.englishExam }} 分</small>
             </label>
             <label class="line-checkbox">
               <input type="checkbox" v-model="state.english_review" />
@@ -55,33 +91,52 @@
               <span>看刘晓燕课程 1 节（20分）</span>
               <strong class="score-tag">{{ itemScores.englishCourse }} 分</strong>
             </label>
-            <label class="line-checkbox">
-              <input type="checkbox" v-model="state.english_exam" />
-              <span>做真题练习 2 大题（10分）</span>
-              <strong class="score-tag">{{ itemScores.englishExam }} 分</strong>
-            </label>
           </fieldset>
 
           <fieldset>
             <legend>二、编程（40分）</legend>
             <label class="line-input">
-              <span>深度工作时长（分钟）</span>
-              <input type="number" v-model.number="state.coding_duration" min="0" step="30" />
-              <small>每 30 分钟 5 分，上限 30 分；当前 {{ itemScores.codingDuration }} 分</small>
+              <span>深度工作单元（每单元30分钟）</span>
+              <div class="stepper">
+                <input type="number" v-model.number="state.coding_work_units" min="0" step="1" />
+                <div class="stepper-buttons">
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_work_units', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_work_units', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                </div>
+              </div>
+              <small>每单元 5 分，上限 30 分；当前 {{ itemScores.codingDuration }} 分</small>
             </label>
             <label class="line-input">
               <span>博客/笔记（篇）</span>
-              <input type="number" v-model.number="state.coding_extra_blog" min="0" />
+              <div class="stepper">
+                <input type="number" v-model.number="state.coding_extra_blog" min="0" step="1" />
+                <div class="stepper-buttons">
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_extra_blog', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_extra_blog', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                </div>
+              </div>
               <small>10 分/篇；当前 {{ itemScores.codingBlog }} 分（参与三项合并封顶）</small>
             </label>
             <label class="line-input">
               <span>解决技术难点（个）</span>
-              <input type="number" v-model.number="state.coding_extra_debug" min="0" />
+              <div class="stepper">
+                <input type="number" v-model.number="state.coding_extra_debug" min="0" step="1" />
+                <div class="stepper-buttons">
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_extra_debug', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_extra_debug', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                </div>
+              </div>
               <small>5 分/个；当前 {{ itemScores.codingDebug }} 分（参与三项合并封顶）</small>
             </label>
             <label class="line-input">
               <span>优化细节（处）</span>
-              <input type="number" v-model.number="state.coding_extra_opt" min="0" />
+              <div class="stepper">
+                <input type="number" v-model.number="state.coding_extra_opt" min="0" step="1" />
+                <div class="stepper-buttons">
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_extra_opt', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_extra_opt', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                </div>
+              </div>
               <small>5 分/处；当前 {{ itemScores.codingOpt }} 分（参与三项合并封顶）</small>
             </label>
             <p class="cap-note">
@@ -97,9 +152,15 @@
           <fieldset>
             <legend>三、超额编程</legend>
             <label class="line-input">
-              <span>第 4 小时及以后深度工作（分钟）</span>
-              <input type="number" v-model.number="state.extra_coding_duration" min="0" step="30" />
-              <small>每 30 分钟 5 分，上限 30 分；当前 {{ itemScores.extraCoding }} 分</small>
+              <span>第 3 小时及以后深度工作单元（每单元30分钟）</span>
+              <div class="stepper">
+                <input type="number" v-model.number="state.extra_coding_units" min="0" step="1" />
+                <div class="stepper-buttons">
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('extra_coding_units', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('extra_coding_units', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                </div>
+              </div>
+              <small>每单元 5 分，上限 30 分；当前 {{ itemScores.extraCoding }} 分</small>
             </label>
           </fieldset>
 
@@ -107,12 +168,24 @@
             <legend>四、绘画</legend>
             <label class="line-input">
               <span>练习单元（个）</span>
-              <input type="number" v-model.number="state.painting_practice_unit" min="0" />
+              <div class="stepper">
+                <input type="number" v-model.number="state.painting_practice_unit" min="0" step="1" />
+                <div class="stepper-buttons">
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('painting_practice_unit', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('painting_practice_unit', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                </div>
+              </div>
               <small>10 分/个；当前 {{ itemScores.paintingPractice }} 分</small>
             </label>
             <label class="line-input">
               <span>作品阶段单元（个）</span>
-              <input type="number" v-model.number="state.painting_stage_unit" min="0" />
+              <div class="stepper">
+                <input type="number" v-model.number="state.painting_stage_unit" min="0" step="1" />
+                <div class="stepper-buttons">
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('painting_stage_unit', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('painting_stage_unit', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                </div>
+              </div>
               <small>10 分/个；当前 {{ itemScores.paintingStage }} 分</small>
             </label>
           </fieldset>
@@ -121,12 +194,24 @@
             <legend>五、文学创作</legend>
             <label class="line-input">
               <span>初创单元（个）</span>
-              <input type="number" v-model.number="state.writing_draft_unit" min="0" />
+              <div class="stepper">
+                <input type="number" v-model.number="state.writing_draft_unit" min="0" step="1" />
+                <div class="stepper-buttons">
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('writing_draft_unit', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('writing_draft_unit', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                </div>
+              </div>
               <small>30 分/个；当前 {{ itemScores.writingDraft }} 分</small>
             </label>
             <label class="line-input">
               <span>精修单元（个）</span>
-              <input type="number" v-model.number="state.writing_revise_unit" min="0" />
+              <div class="stepper">
+                <input type="number" v-model.number="state.writing_revise_unit" min="0" step="1" />
+                <div class="stepper-buttons">
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('writing_revise_unit', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('writing_revise_unit', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                </div>
+              </div>
               <small>20 分/个；当前 {{ itemScores.writingRevise }} 分</small>
             </label>
           </fieldset>
@@ -164,6 +249,7 @@
           确认导入
         </button>
       </section>
+      </template>
     </main>
   </div>
 </template>
@@ -171,8 +257,10 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useProgressStore } from './stores/useProgressStore'
+import StatsView from './components/StatsView.vue'
 
 const { state, scores, reset } = useProgressStore()
+const activePage = ref('daily')
 
 function handleDateChange() {
   // 已移除本地化存储能力，切换日期时仅刷新为空白记录
@@ -185,19 +273,52 @@ function doReset() {
   hint.value = `已重置 ${state.date} 的记录。`
 }
 
+function adjustValue(field, delta) {
+  const current = Number(state[field]) || 0
+  const next = Math.max(0, current + delta)
+  state[field] = next
+}
+
 const hint = ref('')
+let holdTimeoutId = null
+let holdIntervalId = null
+
+function clearHoldTimers() {
+  if (holdTimeoutId) {
+    clearTimeout(holdTimeoutId)
+    holdTimeoutId = null
+  }
+  if (holdIntervalId) {
+    clearInterval(holdIntervalId)
+    holdIntervalId = null
+  }
+}
+
+function startAdjust(field, delta) {
+  clearHoldTimers()
+  adjustValue(field, delta)
+  holdTimeoutId = setTimeout(() => {
+    holdIntervalId = setInterval(() => {
+      adjustValue(field, delta)
+    }, 100)
+  }, 320)
+}
+
+function stopAdjust() {
+  clearHoldTimers()
+}
 
 const itemScores = computed(() => {
   const codingBlog = state.coding_extra_blog * 10
   const codingDebug = state.coding_extra_debug * 5
   const codingOpt = state.coding_extra_opt * 5
-  const extraCoding = Math.min(Math.floor(state.extra_coding_duration / 30) * 5, 30)
+  const extraCoding = Math.min(state.extra_coding_units * 5, 30)
 
   return {
-    englishWords: state.english_words ? 20 : 0,
+    englishWords: scores.value.englishWordsScore,
     englishReview: state.english_review ? 10 : 0,
     englishCourse: state.english_course ? 20 : 0,
-    englishExam: state.english_exam ? 10 : 0,
+    englishExam: scores.value.englishExamScore,
     codingDuration: scores.value.codingDurationScore,
     codingBlog,
     codingDebug,
@@ -228,45 +349,46 @@ const autoGoalValues = computed(() => goals.value.filter((goal) => goal.done).ma
 
 function copyScoreSummary() {
   const mustScore = scores.value.english + scores.value.coding
-  const reachedGoals = goals.value.filter((goal) => goal.done).map((goal) => `- ${goal.label}`)
-  const pendingGoals = goals.value.filter((goal) => !goal.done).map((goal) => `- ${goal.label}`)
+  const codingMinutes = state.coding_work_units * 30
+  const extraCodingMinutes = state.extra_coding_units * 30
+
+  const englishParts = [
+    `背新词${state.english_words_groups}组（每组20个）`,
+  ]
+  if (state.english_review) englishParts.push('复习了全部旧词')
+  if (state.english_course) englishParts.push('看了一节刘晓燕的课程')
+  englishParts.push(`练习了${state.english_exam_count}道真题`)
+
+  const codingParts = [
+    `深度工作${codingMinutes}分钟`,
+  ]
+  if (state.coding_extra_blog > 0) codingParts.push('写了博客/笔记')
+  codingParts.push(`解决了${state.coding_extra_debug}个技术难点`)
+  codingParts.push(`优化了${state.coding_extra_opt}处细节`)
 
   const lines = [
     `【${state.date} 每日量化总结】`,
     '',
     '一、英语（60分）',
-    `- 背新词 80 个：${itemScores.value.englishWords} 分`,
-    `- 复习旧词：${itemScores.value.englishReview} 分`,
-    `- 看刘晓燕课程 1 节：${itemScores.value.englishCourse} 分`,
-    `- 做真题练习 2 大题：${itemScores.value.englishExam} 分`,
-    `- 英语小计：${scores.value.english}/60`,
+    `- ${englishParts.join('，')}，英语得分小计：${scores.value.english}/60`,
     '',
     '二、编程（40分）',
-    `- 深度工作时长：${itemScores.value.codingDuration} 分`,
-    `- 博客/笔记：${itemScores.value.codingBlog} 分`,
-    `- 解决技术难点：${itemScores.value.codingDebug} 分`,
-    `- 优化细节：${itemScores.value.codingOpt} 分`,
-    `- 三项合计（博客+难点+优化）：原始 ${itemScores.value.codingExtraRaw} 分，计入 ${itemScores.value.codingExtra}/10`,
-    `- 编程小计：${scores.value.coding}/40`,
+    `- ${codingParts.join('，')}，编程得分小计：${scores.value.coding}/40`,
     '',
     '三、可选部分（封顶60分）',
-    `- 超额编程：${itemScores.value.extraCoding} 分`,
-    `- 绘画练习单元：${itemScores.value.paintingPractice} 分`,
-    `- 绘画作品阶段：${itemScores.value.paintingStage} 分`,
-    `- 文学初创单元：${itemScores.value.writingDraft} 分`,
-    `- 文学精修单元：${itemScores.value.writingRevise} 分`,
-    `- 可选小计：${scores.value.optional}/60（原始 ${scores.value.optionalRaw}）`,
+    `- 额外编程${extraCodingMinutes}分钟，绘画练习了${state.painting_practice_unit}个单元、推进作品阶段${state.painting_stage_unit}个，文学初创${state.writing_draft_unit}篇、精修${state.writing_revise_unit}篇，可选得分小计：${scores.value.optional}/60`,
     '',
     '四、总览',
     `- 必须部分总分：${mustScore}/100`,
     `- 总分：${scores.value.total}/160`,
+    '- 自评：',
     '',
     '五、目标达成',
-    '已达成：',
-    ...(reachedGoals.length ? reachedGoals : ['- 暂无']),
-    '',
-    '未达成：',
-    ...(pendingGoals.length ? pendingGoals : ['- 暂无']),
+    `- 必须部分达成60分${goals.value.find((goal) => goal.value === 'must60')?.done ? ' √' : ''}`,
+    `- 必须部分达成80分${goals.value.find((goal) => goal.value === 'must80')?.done ? ' √' : ''}`,
+    `- 必须部分达成100分${goals.value.find((goal) => goal.value === 'must100')?.done ? ' √' : ''}`,
+    `- 可选部分达成30分${goals.value.find((goal) => goal.value === 'opt30')?.done ? ' √' : ''}`,
+    `- 可选拿满60分${goals.value.find((goal) => goal.value === 'opt60')?.done ? ' √' : ''}`,
   ].join('\n')
 
   navigator.clipboard.writeText(lines).then(() => {
@@ -280,15 +402,15 @@ function copyScoreSummary() {
 function exportData() {
   const lines = [
     `[${state.date}]`,
-    `english_words=${state.english_words ? 20 : 0}`,
+    `english_words_groups=${state.english_words_groups}`,
     `english_review=${state.english_review ? 10 : 0}`,
     `english_course=${state.english_course ? 20 : 0}`,
-    `english_exam=${state.english_exam ? 10 : 0}`,
-    `coding_duration=${state.coding_duration}`,
+    `english_exam_count=${state.english_exam_count}`,
+    `coding_work_units=${state.coding_work_units}`,
     `coding_extra_blog=${state.coding_extra_blog}`,
     `coding_extra_debug=${state.coding_extra_debug}`,
     `coding_extra_opt=${state.coding_extra_opt}`,
-    `extra_coding_duration=${state.extra_coding_duration}`,
+    `extra_coding_units=${state.extra_coding_units}`,
     `painting_practice_unit=${state.painting_practice_unit}`,
     `painting_stage_unit=${state.painting_stage_unit}`,
     `writing_draft_unit=${state.writing_draft_unit}`,
@@ -320,18 +442,53 @@ function doImport() {
     }
   })
 
-  const booleanFields = ['english_words', 'english_review', 'english_course', 'english_exam']
+  const booleanFields = ['english_review', 'english_course']
   const numberFields = [
-    'coding_duration',
+    'english_words_groups',
+    'english_exam_count',
+    'coding_work_units',
     'coding_extra_blog',
     'coding_extra_debug',
     'coding_extra_opt',
-    'extra_coding_duration',
+    'extra_coding_units',
     'painting_practice_unit',
     'painting_stage_unit',
     'writing_draft_unit',
     'writing_revise_unit'
   ]
+  const maxByField = {
+    // 英语上限：背词 20 分 + 真题 30 分，分别折算最大组数/题数
+    english_words_groups: 4,
+    english_exam_count: 6,
+    // 编程时长分：基础 30 分，超额 30 分
+    coding_work_units: 6,
+    extra_coding_units: 6,
+    // 编程额外三项共用 10 分上限，这里按单项最大贡献做硬限制
+    coding_extra_blog: 1,
+    coding_extra_debug: 2,
+    coding_extra_opt: 2,
+  }
+  let adjustedCount = 0
+
+  // 兼容旧导出格式：english_words=20/0 -> english_words_groups=4/0
+  if ('english_words' in data && !('english_words_groups' in data)) {
+    const legacyValue = Number(data.english_words)
+    data.english_words_groups = Number.isFinite(legacyValue) && legacyValue > 0 ? 4 : 0
+  }
+  if ('english_exam' in data && !('english_exam_count' in data)) {
+    const legacyValue = Number(data.english_exam)
+    data.english_exam_count = Number.isFinite(legacyValue) && legacyValue > 0 ? 2 : 0
+  }
+
+  // 兼容旧导出格式（分钟）到新字段（单元）
+  if ('coding_duration' in data && !('coding_work_units' in data)) {
+    const minuteValue = Number(data.coding_duration)
+    data.coding_work_units = Number.isFinite(minuteValue) && minuteValue > 0 ? Math.floor(minuteValue / 30) : 0
+  }
+  if ('extra_coding_duration' in data && !('extra_coding_units' in data)) {
+    const minuteValue = Number(data.extra_coding_duration)
+    data.extra_coding_units = Number.isFinite(minuteValue) && minuteValue > 0 ? Math.floor(minuteValue / 30) : 0
+  }
 
   // 更新状态（仅更新存在的字段）
   Object.keys(data).forEach((key) => {
@@ -342,14 +499,22 @@ function doImport() {
       }
       if (numberFields.includes(key)) {
         const numberValue = Number(data[key])
-        state[key] = Number.isFinite(numberValue) && numberValue > 0 ? Math.floor(numberValue) : 0
+        let normalizedValue = Number.isFinite(numberValue) && numberValue > 0 ? Math.floor(numberValue) : 0
+        const max = maxByField[key]
+        if (max !== undefined && normalizedValue > max) {
+          normalizedValue = max
+          adjustedCount += 1
+        }
+        state[key] = normalizedValue
       }
     }
   })
 
   showImport.value = false
   importText.value = ''
-  hint.value = '导入完成，已应用到当前日期。'
+  hint.value = adjustedCount > 0
+    ? `导入完成，已自动修正 ${adjustedCount} 项超限值。`
+    : '导入完成，已应用到当前日期。'
 }
 </script>
 
@@ -364,6 +529,12 @@ function doImport() {
   margin: 0 auto;
   display: grid;
   gap: 14px;
+}
+
+.page-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
 }
 
 .header-card,
@@ -486,6 +657,38 @@ legend {
   border: 1px solid #cbd5e1;
   padding: 0 10px;
   font: inherit;
+}
+
+.stepper {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.stepper input {
+  width: 100%;
+  min-width: 0;
+  text-align: center;
+}
+
+.stepper-buttons {
+  display: grid;
+  grid-template-columns: 44px 44px;
+  gap: 6px;
+}
+
+.step-btn {
+  height: 40px;
+  min-height: 40px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #eef2ff;
+  color: #1e3a8a;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .line-input small {
