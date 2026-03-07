@@ -8,9 +8,10 @@
         placeholder="[2026-03-01]
 english_words_groups=4
 english_review=10
-english_course=20
+english_course=10
 english_exam_count=3
 coding_work_units=5
+coding_exercise_groups=2
 ...
 
 [2026-03-02]
@@ -54,7 +55,7 @@ const seriesOptions = [
   { key: 'total', label: '总分', color: '#1d4ed8' },
   { key: 'must', label: '必须部分', color: '#7c3aed' },
   { key: 'english', label: '英语', color: '#0f766e' },
-  { key: 'coding', label: '编程（时长分+额外分）', color: '#ca8a04' },
+  { key: 'coding', label: '编程（必须+超额）', color: '#ca8a04' },
   { key: 'optional', label: '可选部分', color: '#dc2626' },
   { key: 'painting', label: '绘画', color: '#db2777' },
   { key: 'writing', label: '文学创作', color: '#059669' },
@@ -117,7 +118,7 @@ function calcMetrics(data) {
       : (toInt(data.english_words) > 0 ? 4 : 0)
 
   const englishReview = toBoolScore(data.english_review) ? 10 : 0
-  const englishCourse = toBoolScore(data.english_course) ? 20 : 0
+  const englishCourse = toBoolScore(data.english_course) ? 10 : 0
   const englishExamCount =
     data.english_exam_count !== undefined
       ? toInt(data.english_exam_count)
@@ -125,7 +126,7 @@ function calcMetrics(data) {
 
   const englishWordsScore = Math.min(englishWordsGroups * 5, 20)
   const englishExamScore = Math.min(englishExamCount * 5, 30)
-  const english = Math.min(englishWordsScore + englishReview + englishCourse + englishExamScore, 60)
+  const english = Math.min(englishWordsScore + englishReview + englishCourse + englishExamScore, 50)
   const wordsCount = englishWordsGroups * 20
 
   const codingWorkUnits =
@@ -133,12 +134,14 @@ function calcMetrics(data) {
       ? toInt(data.coding_work_units)
       : Math.floor(toInt(data.coding_duration) / 30)
   const codingDurationScore = Math.min(codingWorkUnits * 5, 30)
+  const codingExerciseGroups = toInt(data.coding_exercise_groups)
+  const codingExerciseScore = Math.min(codingExerciseGroups * 5, 30)
   const codingExtraRaw =
     toInt(data.coding_extra_blog) * 10 +
     toInt(data.coding_extra_debug) * 5 +
     toInt(data.coding_extra_opt) * 5
   const codingExtra = Math.min(codingExtraRaw, 10)
-  const coding = Math.min(codingDurationScore + codingExtra, 40)
+  const coding = Math.min(codingDurationScore + codingExerciseScore + codingExtra, 50)
 
   const extraCodingUnits =
     data.extra_coding_units !== undefined

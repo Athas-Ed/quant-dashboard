@@ -2,6 +2,8 @@ Set WshShell = CreateObject("WScript.Shell")
 Set FSO = CreateObject("Scripting.FileSystemObject")
 scriptDir = FSO.GetParentFolderName(WScript.ScriptFullName)
 targetUrl = "http://localhost:4173/quant-dashboard/"
+windowWidth = 600
+windowHeight = 700
 
 ' Run hidden and write logs to a readable txt file
 cmd = "cmd.exe /c " & Chr(34) & Chr(34) & scriptDir & "\start-offline.bat" & Chr(34) & " --no-open > " & Chr(34) & scriptDir & "\offline-launch.txt" & Chr(34) & " 2>&1" & Chr(34)
@@ -27,7 +29,12 @@ ElseIf FSO.FileExists(chrome2) Then
 End If
 
 If browserExe <> "" Then
-  WshShell.Run Chr(34) & browserExe & Chr(34) & " --app=" & Chr(34) & targetUrl & Chr(34), 1, False
+  psCmd = "$ErrorActionPreference='SilentlyContinue'; Add-Type -AssemblyName System.Windows.Forms; " & _
+          "$wa=[System.Windows.Forms.Screen]::PrimaryScreen.WorkingArea; " & _
+          "$w=" & windowWidth & "; $h=" & windowHeight & "; " & _
+          "$x=[Math]::Max(0,[int](($wa.Width-$w)/2)); $y=[Math]::Max(0,[int](($wa.Height-$h)/2)); " & _
+          "Start-Process -FilePath '" & Replace(browserExe, "'", "''") & "' -ArgumentList @('--app=" & targetUrl & "', '--window-size=" & windowWidth & "," & windowHeight & "', ('--window-position=' + $x + ',' + $y))"
+  WshShell.Run "powershell -NoProfile -WindowStyle Hidden -Command " & Chr(34) & psCmd & Chr(34), 0, False
 Else
   WshShell.Run targetUrl, 1, False
 End If

@@ -36,11 +36,11 @@
         <div class="score-grid">
           <div class="score-item">
             <span class="label">英语</span>
-            <strong>{{ scores.english }} / 60</strong>
+            <strong>{{ scores.english }} / 50</strong>
           </div>
           <div class="score-item">
             <span class="label">编程</span>
-            <strong>{{ scores.coding }} / 40</strong>
+            <strong>{{ scores.coding }} / 50</strong>
           </div>
           <div class="score-item">
             <span class="label">可选</span>
@@ -58,7 +58,7 @@
         <h3>必须部分（目标 100 分）</h3>
         <div class="panel-grid">
           <fieldset>
-            <legend>一、英语（60分）</legend>
+            <legend>一、英语（50分）</legend>
             <label class="line-input">
               <span>背单词（每组20个）</span>
               <div class="stepper">
@@ -88,15 +88,15 @@
             </label>
             <label class="line-checkbox">
               <input type="checkbox" v-model="state.english_course" />
-              <span>看刘晓燕课程 1 节（20分）</span>
+              <span>看刘晓燕课程 1 节（10分）</span>
               <strong class="score-tag">{{ itemScores.englishCourse }} 分</strong>
             </label>
           </fieldset>
 
           <fieldset>
-            <legend>二、编程（40分）</legend>
+            <legend>二、编程（50分）</legend>
             <label class="line-input">
-              <span>深度工作单元（每单元30分钟）</span>
+              <span>编程单元（每单元30分钟）</span>
               <div class="stepper">
                 <input type="number" v-model.number="state.coding_work_units" min="0" step="1" />
                 <div class="stepper-buttons">
@@ -105,6 +105,17 @@
                 </div>
               </div>
               <small>每单元 5 分，上限 30 分；当前 {{ itemScores.codingDuration }} 分</small>
+            </label>
+            <label class="line-input">
+              <span>练习题组（组）</span>
+              <div class="stepper">
+                <input type="number" v-model.number="state.coding_exercise_groups" min="0" step="1" />
+                <div class="stepper-buttons">
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_exercise_groups', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_exercise_groups', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                </div>
+              </div>
+              <small>每组 5 分，上限 30 分；当前 {{ itemScores.codingExercise }} 分</small>
             </label>
             <label class="line-input">
               <span>博客/笔记（篇）</span>
@@ -152,7 +163,7 @@
           <fieldset>
             <legend>三、超额编程</legend>
             <label class="line-input">
-              <span>第 3 小时及以后深度工作单元（每单元30分钟）</span>
+              <span>第 3 小时及以后编程单元（每单元30分钟）</span>
               <div class="stepper">
                 <input type="number" v-model.number="state.extra_coding_units" min="0" step="1" />
                 <div class="stepper-buttons">
@@ -317,9 +328,10 @@ const itemScores = computed(() => {
   return {
     englishWords: scores.value.englishWordsScore,
     englishReview: state.english_review ? 10 : 0,
-    englishCourse: state.english_course ? 20 : 0,
+    englishCourse: state.english_course ? 10 : 0,
     englishExam: scores.value.englishExamScore,
     codingDuration: scores.value.codingDurationScore,
+    codingExercise: scores.value.codingExerciseScore,
     codingBlog,
     codingDebug,
     codingOpt,
@@ -351,6 +363,7 @@ function copyScoreSummary() {
   const mustScore = scores.value.english + scores.value.coding
   const codingMinutes = state.coding_work_units * 30
   const extraCodingMinutes = state.extra_coding_units * 30
+  const codingExerciseGroups = state.coding_exercise_groups
 
   const englishParts = [
     `背新词${state.english_words_groups}组（每组20个）`,
@@ -360,7 +373,8 @@ function copyScoreSummary() {
   englishParts.push(`练习了${state.english_exam_count}道真题`)
 
   const codingParts = [
-    `深度工作${codingMinutes}分钟`,
+    `编程${codingMinutes}分钟`,
+    `练了${codingExerciseGroups}组题`,
   ]
   if (state.coding_extra_blog > 0) codingParts.push('写了博客/笔记')
   codingParts.push(`解决了${state.coding_extra_debug}个技术难点`)
@@ -369,11 +383,11 @@ function copyScoreSummary() {
   const lines = [
     `【${state.date} 每日量化总结】`,
     '',
-    '一、英语（60分）',
-    `- ${englishParts.join('，')}，英语得分小计：${scores.value.english}/60`,
+    '一、英语（50分）',
+    `- ${englishParts.join('，')}，英语得分小计：${scores.value.english}/50`,
     '',
-    '二、编程（40分）',
-    `- ${codingParts.join('，')}，编程得分小计：${scores.value.coding}/40`,
+    '二、编程（50分）',
+    `- ${codingParts.join('，')}，编程得分小计：${scores.value.coding}/50`,
     '',
     '三、可选部分（封顶60分）',
     `- 额外编程${extraCodingMinutes}分钟，绘画练习了${state.painting_practice_unit}个单元、推进作品阶段${state.painting_stage_unit}个，文学初创${state.writing_draft_unit}篇、精修${state.writing_revise_unit}篇，可选得分小计：${scores.value.optional}/60`,
@@ -404,9 +418,10 @@ function exportData() {
     `[${state.date}]`,
     `english_words_groups=${state.english_words_groups}`,
     `english_review=${state.english_review ? 10 : 0}`,
-    `english_course=${state.english_course ? 20 : 0}`,
+    `english_course=${state.english_course ? 10 : 0}`,
     `english_exam_count=${state.english_exam_count}`,
     `coding_work_units=${state.coding_work_units}`,
+    `coding_exercise_groups=${state.coding_exercise_groups}`,
     `coding_extra_blog=${state.coding_extra_blog}`,
     `coding_extra_debug=${state.coding_extra_debug}`,
     `coding_extra_opt=${state.coding_extra_opt}`,
@@ -447,6 +462,7 @@ function doImport() {
     'english_words_groups',
     'english_exam_count',
     'coding_work_units',
+    'coding_exercise_groups',
     'coding_extra_blog',
     'coding_extra_debug',
     'coding_extra_opt',
@@ -460,8 +476,9 @@ function doImport() {
     // 英语上限：背词 20 分 + 真题 30 分，分别折算最大组数/题数
     english_words_groups: 4,
     english_exam_count: 6,
-    // 编程时长分：基础 30 分，超额 30 分
+    // 编程单元分：基础 30 分，超额 30 分；练习题组上限 30 分
     coding_work_units: 6,
+    coding_exercise_groups: 6,
     extra_coding_units: 6,
     // 编程额外三项共用 10 分上限，这里按单项最大贡献做硬限制
     coding_extra_blog: 1,

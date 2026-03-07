@@ -8,10 +8,11 @@ export function useProgressStore() {
         // 英语部分
         english_words_groups: 0,   // 背单词组数（每组20个，5分/组，上限20分）
         english_review: false,     // 复习旧词 (10分)
-        english_course: false,     // 看课程 (20分)
+        english_course: false,     // 看课程 (10分)
         english_exam_count: 0,     // 真题题数（5分/题，上限30分）
         // 编程部分
-        coding_work_units: 0,      // 深度工作单元（每单元30分钟），每单元5分，上限30分
+        coding_work_units: 0,      // 编程单元（每单元30分钟），每单元5分，上限30分
+        coding_exercise_groups: 0, // 练习题组（每组5分，上限30分）
         coding_extra_blog: 0,      // 博客笔记 (10分)
         coding_extra_debug: 0,     // 解决技术难点 (5分/个)
         coding_extra_opt: 0,       // 优化细节 (5分/个)
@@ -27,6 +28,7 @@ export function useProgressStore() {
         'english_words_groups',
         'english_exam_count',
         'coding_work_units',
+        'coding_exercise_groups',
         'coding_extra_blog',
         'coding_extra_debug',
         'coding_extra_opt',
@@ -98,17 +100,18 @@ export function useProgressStore() {
         const englishRaw =
             englishWordsScore +
             (state.english_review ? 10 : 0) +
-            (state.english_course ? 20 : 0) +
+            (state.english_course ? 10 : 0) +
             englishExamScore
-        const english = Math.min(englishRaw, 60)
+        const english = Math.min(englishRaw, 50)
 
         const codingDurationScore = Math.min(state.coding_work_units * 5, 30)
+        const codingExerciseScore = Math.min(state.coding_exercise_groups * 5, 30)
         const codingExtraRaw =
             state.coding_extra_blog * 10 +
             state.coding_extra_debug * 5 +
             state.coding_extra_opt * 5
         const codingExtra = Math.min(codingExtraRaw, 10) // 三项共用10分上限
-        const coding = Math.min(codingDurationScore + codingExtra, 40) // 编程部分封顶40分
+        const coding = Math.min(codingDurationScore + codingExerciseScore + codingExtra, 50) // 编程部分封顶50分
 
         const extraCoding = Math.min(state.extra_coding_units * 5, 30)
         const painting = state.painting_practice_unit * 10 + state.painting_stage_unit * 10
@@ -124,6 +127,7 @@ export function useProgressStore() {
             englishRaw,
             english,
             codingDurationScore,
+            codingExerciseScore,
             codingExtraRaw,
             codingExtra,
             coding,
