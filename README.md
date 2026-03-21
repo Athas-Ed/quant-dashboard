@@ -27,12 +27,20 @@ quant-dashboard/
 │  ├─ App.vue                       # 录入页与业务交互
 │  ├─ main.js                       # 应用入口
 │  └─ style.css                     # 全局样式
+├─ docs/
+│  └─ blog-archive/                 # 博客初稿与写作素材存档（见该目录 README）
 ├─ index.html
 ├─ vite.config.js                   # Pages/离线构建 base 配置
 ├─ start-offline.bat                # 本地离线服务启动脚本
 ├─ start-offline-silent.vbs         # 静默启动 + 独立窗口模式
+├─ 新规则.md                        # 计分规则口径（改规则时建议同步对照代码）
 └─ package.json
 ```
+
+## 相关文档
+
+- **[`新规则.md`](./新规则.md)**：当前业务计分规则说明（与实现不一致时，以代码为准并建议更新本文档）。
+- **[`docs/blog-archive/`](./docs/blog-archive/)**：开发博客初稿、写作素材、`Vue3` 笔记及项目说明草稿；**不保证与最新代码同步**，仅作写作与归档用途。
 
 ## 功能特性（亮点）
 
