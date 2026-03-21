@@ -6,12 +6,14 @@
       <textarea
         v-model="rawText"
         placeholder="[2026-03-01]
-english_words_groups=4
-english_review=10
-english_course=10
+english_words_groups=2
+english_review=1
+english_course=1
 english_exam_count=3
-coding_work_units=5
-coding_exercise_groups=2
+test_work_units=4
+test_exercise_groups=2
+test_knowledge_units=3
+test_report_count=1
 ...
 
 [2026-03-02]
@@ -45,6 +47,7 @@ coding_exercise_groups=2
 <script setup>
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import Chart from 'chart.js/auto'
+import { computeProgressScores } from '../stores/useProgressStore'
 
 const rawText = ref('')
 const chartCanvas = ref(null)
@@ -55,11 +58,11 @@ const seriesOptions = [
   { key: 'total', label: '总分', color: '#1d4ed8' },
   { key: 'must', label: '必须部分', color: '#7c3aed' },
   { key: 'english', label: '英语', color: '#0f766e' },
-  { key: 'coding', label: '编程（必须+超额）', color: '#ca8a04' },
+  { key: 'test', label: '测试', color: '#ca8a04' },
   { key: 'optional', label: '可选部分', color: '#dc2626' },
   { key: 'painting', label: '绘画', color: '#db2777' },
   { key: 'writing', label: '文学创作', color: '#059669' },
-  { key: 'codingHalfHours', label: '编程时长（半小时单元）', color: '#0369a1' },
+  { key: 'testWorkUnits', label: '测试工作单元数', color: '#0369a1' },
   { key: 'wordsCount', label: '背词数量（词）', color: '#65a30d' },
 ]
 
@@ -67,11 +70,11 @@ const selectedSeries = ref({
   total: true,
   must: true,
   english: false,
-  coding: false,
+  test: false,
   optional: true,
   painting: false,
   writing: false,
-  codingHalfHours: false,
+  testWorkUnits: false,
   wordsCount: false,
 })
 
@@ -79,11 +82,6 @@ function toInt(value) {
   const num = Number(value)
   if (!Number.isFinite(num) || num < 0) return 0
   return Math.floor(num)
-}
-
-function toBoolScore(value) {
-  if (value === true || value === 'true') return true
-  return toInt(value) > 0
 }
 
 function parseRecordMap(text) {
@@ -112,63 +110,21 @@ function parseRecordMap(text) {
 }
 
 function calcMetrics(data) {
-  const englishWordsGroups =
-    data.english_words_groups !== undefined
-      ? toInt(data.english_words_groups)
-      : (toInt(data.english_words) > 0 ? 4 : 0)
-
-  const englishReview = toBoolScore(data.english_review) ? 10 : 0
-  const englishCourse = toBoolScore(data.english_course) ? 10 : 0
-  const englishExamCount =
-    data.english_exam_count !== undefined
-      ? toInt(data.english_exam_count)
-      : (toInt(data.english_exam) > 0 ? 2 : 0)
-
-  const englishWordsScore = Math.min(englishWordsGroups * 5, 20)
-  const englishExamScore = Math.min(englishExamCount * 5, 30)
-  const english = Math.min(englishWordsScore + englishReview + englishCourse + englishExamScore, 50)
+  const s = computeProgressScores(data)
+  const englishWordsGroups = toInt(data.english_words_groups)
   const wordsCount = englishWordsGroups * 20
-
-  const codingWorkUnits =
-    data.coding_work_units !== undefined
-      ? toInt(data.coding_work_units)
-      : Math.floor(toInt(data.coding_duration) / 30)
-  const codingDurationScore = Math.min(codingWorkUnits * 5, 30)
-  const codingExerciseGroups = toInt(data.coding_exercise_groups)
-  const codingExerciseScore = Math.min(codingExerciseGroups * 5, 30)
-  const codingExtraRaw =
-    toInt(data.coding_extra_blog) * 10 +
-    toInt(data.coding_extra_debug) * 5 +
-    toInt(data.coding_extra_opt) * 5
-  const codingExtra = Math.min(codingExtraRaw, 10)
-  const coding = Math.min(codingDurationScore + codingExerciseScore + codingExtra, 50)
-
-  const extraCodingUnits =
-    data.extra_coding_units !== undefined
-      ? toInt(data.extra_coding_units)
-      : Math.floor(toInt(data.extra_coding_duration) / 30)
-  const extraCoding = Math.min(extraCodingUnits * 5, 30)
-  const codingHalfHours = codingWorkUnits + extraCodingUnits
-  const painting = toInt(data.painting_practice_unit) * 10 + toInt(data.painting_stage_unit) * 10
-  const writing = toInt(data.writing_draft_unit) * 30 + toInt(data.writing_revise_unit) * 20
-
-  const optionalRaw = extraCoding + painting + writing
-  const optional = Math.min(optionalRaw, 60)
-  const must = english + coding
-  const total = must + optional
-  // 统计口径：编程基础分（含博客/难点/优化）+ 超额编程分
-  const codingWithExtra = coding + extraCoding
+  const testWorkUnits = toInt(data.test_work_units)
 
   return {
-    english,
-    coding: codingWithExtra,
-    optional,
-    painting,
-    writing,
-    must,
-    total,
-    codingHalfHours,
-    wordsCount
+    english: s.english,
+    test: s.test,
+    optional: s.optional,
+    painting: s.paintingScore,
+    writing: s.writingScore,
+    must: s.must,
+    total: s.total,
+    testWorkUnits,
+    wordsCount,
   }
 }
 
@@ -200,7 +156,7 @@ function renderChart() {
       tension: 0.25,
       pointRadius: 2,
       fill: false,
-      yAxisID: item.key === 'codingHalfHours' ? 'y1' : 'y',
+      yAxisID: item.key === 'testWorkUnits' ? 'y1' : 'y',
     }))
 
   if (!datasets.length) return
@@ -226,7 +182,7 @@ function renderChart() {
           position: 'right',
           display: hasHalfHourSeries,
           beginAtZero: true,
-          title: { display: hasHalfHourSeries, text: '编程时长（半小时单元）' },
+          title: { display: hasHalfHourSeries, text: '工作单元个数' },
           grid: {
             drawOnChartArea: false,
           },

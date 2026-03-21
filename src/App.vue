@@ -36,11 +36,11 @@
         <div class="score-grid">
           <div class="score-item">
             <span class="label">英语</span>
-            <strong>{{ scores.english }} / 50</strong>
+            <strong>{{ scores.english }} / 60</strong>
           </div>
           <div class="score-item">
-            <span class="label">编程</span>
-            <strong>{{ scores.coding }} / 50</strong>
+            <span class="label">测试</span>
+            <strong>{{ scores.test }} / 80</strong>
           </div>
           <div class="score-item">
             <span class="label">可选</span>
@@ -49,16 +49,16 @@
           </div>
           <div class="score-item total">
             <span class="label">总分</span>
-            <strong>{{ scores.total }} / 160</strong>
+            <strong>{{ scores.total }} / 200</strong>
           </div>
         </div>
       </section>
 
       <section class="section-card">
-        <h3>必须部分（目标 100 分）</h3>
+        <h3>必须部分（目标 100 分，上限 140 分）</h3>
         <div class="panel-grid">
           <fieldset>
-            <legend>一、英语（50分）</legend>
+            <legend>一、英语（上限 60 分）</legend>
             <label class="line-input">
               <span>背单词（每组20个）</span>
               <div class="stepper">
@@ -68,7 +68,7 @@
                   <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('english_words_groups', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
                 </div>
               </div>
-              <small>每组 5 分，上限 20 分；当前 {{ itemScores.englishWords }} 分</small>
+              <small>每组 10 分，上限 30 分；当前 {{ itemScores.englishWords }} 分</small>
             </label>
             <label class="line-input">
               <span>做真题练习（题）</span>
@@ -83,7 +83,7 @@
             </label>
             <label class="line-checkbox">
               <input type="checkbox" v-model="state.english_review" />
-              <span>复习旧词（10分）</span>
+              <span>复习旧词（20分）</span>
               <strong class="score-tag">{{ itemScores.englishReview }} 分</strong>
             </label>
             <label class="line-checkbox">
@@ -94,65 +94,51 @@
           </fieldset>
 
           <fieldset>
-            <legend>二、编程（50分）</legend>
+            <legend>二、测试（上限 80 分）</legend>
             <label class="line-input">
-              <span>编程单元（每单元30分钟）</span>
+              <span>工作单元（每组测试或每 30 分钟）</span>
               <div class="stepper">
-                <input type="number" v-model.number="state.coding_work_units" min="0" step="1" />
+                <input type="number" v-model.number="state.test_work_units" min="0" step="1" />
                 <div class="stepper-buttons">
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_work_units', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_work_units', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('test_work_units', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('test_work_units', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
                 </div>
               </div>
-              <small>每单元 5 分，上限 30 分；当前 {{ itemScores.codingDuration }} 分</small>
+              <small>每单元 5 分，上限 30 分；当前 {{ itemScores.testWork }} 分（可与下方「超额测试单元」联动计分）</small>
             </label>
             <label class="line-input">
               <span>练习题组（组）</span>
               <div class="stepper">
-                <input type="number" v-model.number="state.coding_exercise_groups" min="0" step="1" />
+                <input type="number" v-model.number="state.test_exercise_groups" min="0" step="1" />
                 <div class="stepper-buttons">
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_exercise_groups', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_exercise_groups', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('test_exercise_groups', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('test_exercise_groups', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
                 </div>
               </div>
-              <small>每组 5 分，上限 30 分；当前 {{ itemScores.codingExercise }} 分</small>
+              <small>每组 5 分，上限 30 分；当前 {{ itemScores.testExercise }} 分</small>
             </label>
             <label class="line-input">
-              <span>博客/笔记（篇）</span>
+              <span>知识学习单元（知识点）</span>
               <div class="stepper">
-                <input type="number" v-model.number="state.coding_extra_blog" min="0" step="1" />
+                <input type="number" v-model.number="state.test_knowledge_units" min="0" step="1" />
                 <div class="stepper-buttons">
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_extra_blog', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_extra_blog', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('test_knowledge_units', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('test_knowledge_units', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
                 </div>
               </div>
-              <small>10 分/篇；当前 {{ itemScores.codingBlog }} 分（参与三项合并封顶）</small>
+              <small>每单元 5 分，上限 30 分；当前 {{ itemScores.testKnowledge }} 分</small>
             </label>
             <label class="line-input">
-              <span>解决技术难点（个）</span>
+              <span>测试报告（篇）</span>
               <div class="stepper">
-                <input type="number" v-model.number="state.coding_extra_debug" min="0" step="1" />
+                <input type="number" v-model.number="state.test_report_count" min="0" step="1" />
                 <div class="stepper-buttons">
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_extra_debug', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_extra_debug', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('test_report_count', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('test_report_count', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
                 </div>
               </div>
-              <small>5 分/个；当前 {{ itemScores.codingDebug }} 分（参与三项合并封顶）</small>
+              <small>每篇 10 分，上限 30 分；当前 {{ itemScores.testReport }} 分</small>
             </label>
-            <label class="line-input">
-              <span>优化细节（处）</span>
-              <div class="stepper">
-                <input type="number" v-model.number="state.coding_extra_opt" min="0" step="1" />
-                <div class="stepper-buttons">
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_extra_opt', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('coding_extra_opt', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
-                </div>
-              </div>
-              <small>5 分/处；当前 {{ itemScores.codingOpt }} 分（参与三项合并封顶）</small>
-            </label>
-            <p class="cap-note">
-              三项合计：原始 {{ itemScores.codingExtraRaw }} 分，计入 {{ itemScores.codingExtra }} / 10 分（封顶）
-            </p>
           </fieldset>
         </div>
       </section>
@@ -161,18 +147,19 @@
         <h3>可选部分（封顶 60 分）</h3>
         <div class="panel-grid optional-grid">
           <fieldset>
-            <legend>三、超额编程</legend>
+            <legend>三、超额测试单元</legend>
             <label class="line-input">
-              <span>第 3 小时及以后编程单元（每单元30分钟）</span>
+              <span>超额测试单元（每组测试或每 30 分钟）</span>
               <div class="stepper">
-                <input type="number" v-model.number="state.extra_coding_units" min="0" step="1" />
+                <input type="number" v-model.number="state.extra_test_units" min="0" step="1" />
                 <div class="stepper-buttons">
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('extra_coding_units', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('extra_coding_units', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('extra_test_units', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('extra_test_units', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
                 </div>
               </div>
-              <small>每单元 5 分，上限 30 分；当前 {{ itemScores.extraCoding }} 分</small>
+              <small>每单元 5 分，计入可选上限 20 分；若必须部分「工作单元」未满 30 分，会优先填满该项</small>
             </label>
+            <p class="cap-note">计入可选部分：{{ itemScores.extraTestOptional }} / 20 分</p>
           </fieldset>
 
           <fieldset>
@@ -203,6 +190,11 @@
 
           <fieldset>
             <legend>五、文学创作</legend>
+            <label class="line-checkbox">
+              <input type="checkbox" v-model="state.writing_ideas_done" />
+              <span>构思 / 整理灵感（20分）</span>
+              <strong class="score-tag">{{ itemScores.writingIdeas }} 分</strong>
+            </label>
             <label class="line-input">
               <span>初创单元（个）</span>
               <div class="stepper">
@@ -231,6 +223,7 @@
 
       <section class="section-card">
         <h3>睡前结算（自动计算）</h3>
+        <p class="settlement-narrative">{{ settlementNarrative }}</p>
         <div class="goals-grid">
           <div v-for="goal in goals" :key="goal.value" class="goal-row" :class="{ done: goal.done }">
             <span>{{ goal.label }}</span>
@@ -319,90 +312,103 @@ function stopAdjust() {
   clearHoldTimers()
 }
 
-const itemScores = computed(() => {
-  const codingBlog = state.coding_extra_blog * 10
-  const codingDebug = state.coding_extra_debug * 5
-  const codingOpt = state.coding_extra_opt * 5
-  const extraCoding = Math.min(state.extra_coding_units * 5, 30)
-
-  return {
-    englishWords: scores.value.englishWordsScore,
-    englishReview: state.english_review ? 10 : 0,
-    englishCourse: state.english_course ? 10 : 0,
-    englishExam: scores.value.englishExamScore,
-    codingDuration: scores.value.codingDurationScore,
-    codingExercise: scores.value.codingExerciseScore,
-    codingBlog,
-    codingDebug,
-    codingOpt,
-    codingExtraRaw: scores.value.codingExtraRaw,
-    codingExtra: scores.value.codingExtra,
-    extraCoding,
-    paintingPractice: state.painting_practice_unit * 10,
-    paintingStage: state.painting_stage_unit * 10,
-    writingDraft: state.writing_draft_unit * 30,
-    writingRevise: state.writing_revise_unit * 20
-  }
-})
+const itemScores = computed(() => ({
+  englishWords: scores.value.englishWordsScore,
+  englishReview: scores.value.englishReviewScore,
+  englishCourse: scores.value.englishCourseScore,
+  englishExam: scores.value.englishExamScore,
+  testWork: scores.value.testWorkScore,
+  testExercise: scores.value.testExerciseScore,
+  testKnowledge: scores.value.testKnowledgeScore,
+  testReport: scores.value.testReportScore,
+  extraTestOptional: scores.value.extraTestOptionalScore,
+  paintingPractice: state.painting_practice_unit * 10,
+  paintingStage: state.painting_stage_unit * 10,
+  writingIdeas: state.writing_ideas_done ? 20 : 0,
+  writingDraft: state.writing_draft_unit * 30,
+  writingRevise: state.writing_revise_unit * 20,
+}))
 
 const goals = computed(() => {
-  const mustScore = scores.value.english + scores.value.coding
+  const mustScore = scores.value.must
   const optionalScore = scores.value.optional
   return [
-    { label: '必须部分达成60分', value: 'must60', done: mustScore >= 60, progress: `${mustScore}/100` },
-    { label: '必须部分达成80分', value: 'must80', done: mustScore >= 80, progress: `${mustScore}/100` },
-    { label: '必须部分达成100分', value: 'must100', done: mustScore >= 100, progress: `${mustScore}/100` },
+    { label: '必须部分达成60分', value: 'must60', done: mustScore >= 60, progress: `${mustScore}/140` },
+    { label: '必须部分达成100分', value: 'must100', done: mustScore >= 100, progress: `${mustScore}/140` },
+    { label: '必须部分拿满140分', value: 'must140', done: mustScore >= 140, progress: `${mustScore}/140` },
     { label: '可选部分达成30分', value: 'opt30', done: optionalScore >= 30, progress: `${optionalScore}/60` },
     { label: '可选部分拿满60分', value: 'opt60', done: optionalScore >= 60, progress: `${optionalScore}/60` },
   ]
 })
 
+const settlementNarrative = computed(() => {
+  const parts = []
+  parts.push(`今天背新词${state.english_words_groups * 20}个`)
+  if (state.english_review) parts.push('复习了旧词')
+  if (state.english_course) parts.push('看了一节课程')
+  if (state.english_exam_count > 0) parts.push(`练习了${state.english_exam_count}道题`)
+  parts.push(`测试工作单元${state.test_work_units}个`)
+  if (state.test_exercise_groups > 0) {
+    parts.push(`练了${state.test_exercise_groups}组题`)
+  } else {
+    parts.push('还没有练题，快去')
+  }
+  if (state.test_knowledge_units > 0) {
+    parts.push(`知识学习单元${state.test_knowledge_units}个`)
+  } else {
+    parts.push('还没有学点东西，快去')
+  }
+  if (state.test_report_count > 0) parts.push(`写了${state.test_report_count}篇测试报告`)
+  if (state.extra_test_units > 0) parts.push(`额外测试单元${state.extra_test_units}个`)
+  if (state.painting_practice_unit > 0) {
+    parts.push(`绘画练习了${state.painting_practice_unit}个单元`)
+  }
+  if (state.painting_stage_unit > 0) {
+    parts.push(`推进作品阶段${state.painting_stage_unit}个`)
+  }
+  const wb = []
+  if (state.writing_ideas_done) wb.push('整理了灵感')
+  if (state.writing_draft_unit > 0) wb.push(`初创${state.writing_draft_unit}篇`)
+  if (state.writing_revise_unit > 0) wb.push(`精修${state.writing_revise_unit}篇`)
+  if (wb.length) parts.push(`文学初创：${wb.join('，')}`)
+  parts.push('加油~。')
+  return parts.join('，')
+})
+
 const autoGoalValues = computed(() => goals.value.filter((goal) => goal.done).map((goal) => goal.value))
 
 function copyScoreSummary() {
-  const mustScore = scores.value.english + scores.value.coding
-  const codingMinutes = state.coding_work_units * 30
-  const extraCodingMinutes = state.extra_coding_units * 30
-  const codingExerciseGroups = state.coding_exercise_groups
-
-  const englishParts = [
-    `背新词${state.english_words_groups}组（每组20个）`,
-  ]
-  if (state.english_review) englishParts.push('复习了全部旧词')
-  if (state.english_course) englishParts.push('看了一节刘晓燕的课程')
-  englishParts.push(`练习了${state.english_exam_count}道真题`)
-
-  const codingParts = [
-    `编程${codingMinutes}分钟`,
-    `练了${codingExerciseGroups}组题`,
-  ]
-  if (state.coding_extra_blog > 0) codingParts.push('写了博客/笔记')
-  codingParts.push(`解决了${state.coding_extra_debug}个技术难点`)
-  codingParts.push(`优化了${state.coding_extra_opt}处细节`)
+  const mustScore = scores.value.must
+  const achieved = goals.value.filter((g) => g.done)
+  const goalsBlock =
+    achieved.length > 0
+      ? achieved.map((g) => `- ${g.label} √`).join('\n')
+      : '- （今日暂无已记录达成的目标档）'
 
   const lines = [
     `【${state.date} 每日量化总结】`,
     '',
-    '一、英语（50分）',
-    `- ${englishParts.join('，')}，英语得分小计：${scores.value.english}/50`,
+    '一、今日小结（与睡前结算文案一致）',
+    settlementNarrative.value,
     '',
-    '二、编程（50分）',
-    `- ${codingParts.join('，')}，编程得分小计：${scores.value.coding}/50`,
+    '二、英语（上限60分）',
+    `- 得分小计：${scores.value.english}/60`,
     '',
-    '三、可选部分（封顶60分）',
-    `- 额外编程${extraCodingMinutes}分钟，绘画练习了${state.painting_practice_unit}个单元、推进作品阶段${state.painting_stage_unit}个，文学初创${state.writing_draft_unit}篇、精修${state.writing_revise_unit}篇，可选得分小计：${scores.value.optional}/60`,
+    '三、测试（上限80分）',
+    `- 得分小计：${scores.value.test}/80`,
     '',
-    '四、总览',
-    `- 必须部分总分：${mustScore}/100`,
-    `- 总分：${scores.value.total}/160`,
-    '- 自评：',
+    '四、可选部分（封顶60分）',
+    `- 得分小计：${scores.value.optional}/60`,
     '',
-    '五、目标达成',
-    `- 必须部分达成60分${goals.value.find((goal) => goal.value === 'must60')?.done ? ' √' : ''}`,
-    `- 必须部分达成80分${goals.value.find((goal) => goal.value === 'must80')?.done ? ' √' : ''}`,
-    `- 必须部分达成100分${goals.value.find((goal) => goal.value === 'must100')?.done ? ' √' : ''}`,
-    `- 可选部分达成30分${goals.value.find((goal) => goal.value === 'opt30')?.done ? ' √' : ''}`,
-    `- 可选拿满60分${goals.value.find((goal) => goal.value === 'opt60')?.done ? ' √' : ''}`,
+    '五、总览',
+    `- 必须部分总分：${mustScore}/140`,
+    `- 总分：${scores.value.total}/200`,
+    '',
+    '六、目标达成（仅列出已达成）',
+    goalsBlock,
+    '',
+    '七、自评',
+    '',
   ].join('\n')
 
   navigator.clipboard.writeText(lines).then(() => {
@@ -417,17 +423,17 @@ function exportData() {
   const lines = [
     `[${state.date}]`,
     `english_words_groups=${state.english_words_groups}`,
-    `english_review=${state.english_review ? 10 : 0}`,
-    `english_course=${state.english_course ? 10 : 0}`,
+    `english_review=${state.english_review ? 1 : 0}`,
+    `english_course=${state.english_course ? 1 : 0}`,
     `english_exam_count=${state.english_exam_count}`,
-    `coding_work_units=${state.coding_work_units}`,
-    `coding_exercise_groups=${state.coding_exercise_groups}`,
-    `coding_extra_blog=${state.coding_extra_blog}`,
-    `coding_extra_debug=${state.coding_extra_debug}`,
-    `coding_extra_opt=${state.coding_extra_opt}`,
-    `extra_coding_units=${state.extra_coding_units}`,
+    `test_work_units=${state.test_work_units}`,
+    `test_exercise_groups=${state.test_exercise_groups}`,
+    `test_knowledge_units=${state.test_knowledge_units}`,
+    `test_report_count=${state.test_report_count}`,
+    `extra_test_units=${state.extra_test_units}`,
     `painting_practice_unit=${state.painting_practice_unit}`,
     `painting_stage_unit=${state.painting_stage_unit}`,
+    `writing_ideas_done=${state.writing_ideas_done ? 1 : 0}`,
     `writing_draft_unit=${state.writing_draft_unit}`,
     `writing_revise_unit=${state.writing_revise_unit}`,
     `total=${scores.value.total}`,
@@ -457,55 +463,34 @@ function doImport() {
     }
   })
 
-  const booleanFields = ['english_review', 'english_course']
+  const booleanFields = ['english_review', 'english_course', 'writing_ideas_done']
   const numberFields = [
     'english_words_groups',
     'english_exam_count',
-    'coding_work_units',
-    'coding_exercise_groups',
-    'coding_extra_blog',
-    'coding_extra_debug',
-    'coding_extra_opt',
-    'extra_coding_units',
+    'test_work_units',
+    'test_exercise_groups',
+    'test_knowledge_units',
+    'test_report_count',
+    'extra_test_units',
     'painting_practice_unit',
     'painting_stage_unit',
     'writing_draft_unit',
     'writing_revise_unit'
   ]
   const maxByField = {
-    // 英语上限：背词 20 分 + 真题 30 分，分别折算最大组数/题数
-    english_words_groups: 4,
+    english_words_groups: 3,
     english_exam_count: 6,
-    // 编程单元分：基础 30 分，超额 30 分；练习题组上限 30 分
-    coding_work_units: 6,
-    coding_exercise_groups: 6,
-    extra_coding_units: 6,
-    // 编程额外三项共用 10 分上限，这里按单项最大贡献做硬限制
-    coding_extra_blog: 1,
-    coding_extra_debug: 2,
-    coding_extra_opt: 2,
+    test_work_units: 99,
+    test_exercise_groups: 6,
+    test_knowledge_units: 6,
+    test_report_count: 3,
+    extra_test_units: 99,
+    painting_practice_unit: 99,
+    painting_stage_unit: 99,
+    writing_draft_unit: 99,
+    writing_revise_unit: 99,
   }
   let adjustedCount = 0
-
-  // 兼容旧导出格式：english_words=20/0 -> english_words_groups=4/0
-  if ('english_words' in data && !('english_words_groups' in data)) {
-    const legacyValue = Number(data.english_words)
-    data.english_words_groups = Number.isFinite(legacyValue) && legacyValue > 0 ? 4 : 0
-  }
-  if ('english_exam' in data && !('english_exam_count' in data)) {
-    const legacyValue = Number(data.english_exam)
-    data.english_exam_count = Number.isFinite(legacyValue) && legacyValue > 0 ? 2 : 0
-  }
-
-  // 兼容旧导出格式（分钟）到新字段（单元）
-  if ('coding_duration' in data && !('coding_work_units' in data)) {
-    const minuteValue = Number(data.coding_duration)
-    data.coding_work_units = Number.isFinite(minuteValue) && minuteValue > 0 ? Math.floor(minuteValue / 30) : 0
-  }
-  if ('extra_coding_duration' in data && !('extra_coding_units' in data)) {
-    const minuteValue = Number(data.extra_coding_duration)
-    data.extra_coding_units = Number.isFinite(minuteValue) && minuteValue > 0 ? Math.floor(minuteValue / 30) : 0
-  }
 
   // 更新状态（仅更新存在的字段）
   Object.keys(data).forEach((key) => {
@@ -760,6 +745,17 @@ legend {
 .goal-meta strong {
   font-size: 13px;
   color: #1e40af;
+}
+
+.settlement-narrative {
+  margin: 0 0 14px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  font-size: 14px;
+  line-height: 1.55;
 }
 
 .actions {
