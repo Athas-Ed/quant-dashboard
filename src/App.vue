@@ -222,7 +222,7 @@
       </section>
 
       <section class="section-card">
-        <h3>睡前结算（自动计算）</h3>
+        <h3>小结（自动计算）</h3>
         <p class="settlement-narrative">{{ settlementNarrative }}</p>
         <div class="goals-grid">
           <div v-for="goal in goals" :key="goal.value" class="goal-row" :class="{ done: goal.done }">
@@ -383,31 +383,25 @@ function copyScoreSummary() {
   const goalsBlock =
     achieved.length > 0
       ? achieved.map((g) => `- ${g.label} √`).join('\n')
-      : '- （今日暂无已记录达成的目标档）'
+      : '- （今日暂无已达成目标档）'
 
   const lines = [
-    `【${state.date} 每日量化总结】`,
+    `${state.date} 每日量化总结`,
     '',
-    '一、今日小结（与睡前结算文案一致）',
+    '【今日小结】',
     settlementNarrative.value,
     '',
-    '二、英语（上限60分）',
-    `- 得分小计：${scores.value.english}/60`,
-    '',
-    '三、测试（上限80分）',
-    `- 得分小计：${scores.value.test}/80`,
-    '',
-    '四、可选部分（封顶60分）',
-    `- 得分小计：${scores.value.optional}/60`,
-    '',
-    '五、总览',
+    '【量化统计】',
+    `- 英语得分：${scores.value.english}/60`,
+    `- 测试得分：${scores.value.test}/80`,
+    `- 可选得分：${scores.value.optional}/60`,
     `- 必须部分总分：${mustScore}/140`,
     `- 总分：${scores.value.total}/200`,
     '',
-    '六、目标达成（仅列出已达成）',
+    '【目标达成】',
     goalsBlock,
     '',
-    '七、自评',
+    '自评一句吧：',
     '',
   ].join('\n')
 
