@@ -39,8 +39,8 @@
             <strong>{{ scores.english }} / 60</strong>
           </div>
           <div class="score-item">
-            <span class="label">测试</span>
-            <strong>{{ scores.test }} / 80</strong>
+            <span class="label">AI Agent 开发</span>
+            <strong>{{ scores.agent }} / 80</strong>
           </div>
           <div class="score-item">
             <span class="label">可选</span>
@@ -94,50 +94,50 @@
           </fieldset>
 
           <fieldset>
-            <legend>二、测试（上限 80 分）</legend>
+            <legend>二、AI Agent 开发（上限 80 分）</legend>
             <label class="line-input">
-              <span>工作单元（每组测试或每 30 分钟）</span>
+              <span>工作单元（每组 Agent 开发任务或每 30 分钟）</span>
               <div class="stepper">
-                <input type="number" v-model.number="state.test_work_units" min="0" step="1" />
+                <input type="number" v-model.number="state.agent_work_units" min="0" step="1" />
                 <div class="stepper-buttons">
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('test_work_units', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('test_work_units', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('agent_work_units', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('agent_work_units', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
                 </div>
               </div>
-              <small>每单元 5 分，上限 30 分；当前 {{ itemScores.testWork }} 分（可与下方「超额测试单元」联动计分）</small>
+              <small>每单元 5 分，上限 30 分；当前 {{ itemScores.agentWork }} 分</small>
             </label>
             <label class="line-input">
               <span>练习题组（组）</span>
               <div class="stepper">
-                <input type="number" v-model.number="state.test_exercise_groups" min="0" step="1" />
+                <input type="number" v-model.number="state.agent_exercise_groups" min="0" step="1" />
                 <div class="stepper-buttons">
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('test_exercise_groups', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('test_exercise_groups', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('agent_exercise_groups', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('agent_exercise_groups', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
                 </div>
               </div>
-              <small>每组 5 分，上限 30 分；当前 {{ itemScores.testExercise }} 分</small>
+              <small>每组 5 分，上限 30 分；当前 {{ itemScores.agentExercise }} 分</small>
             </label>
             <label class="line-input">
               <span>知识学习单元（知识点）</span>
               <div class="stepper">
-                <input type="number" v-model.number="state.test_knowledge_units" min="0" step="1" />
+                <input type="number" v-model.number="state.agent_knowledge_units" min="0" step="1" />
                 <div class="stepper-buttons">
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('test_knowledge_units', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('test_knowledge_units', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('agent_knowledge_units', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('agent_knowledge_units', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
                 </div>
               </div>
-              <small>每单元 5 分，上限 30 分；当前 {{ itemScores.testKnowledge }} 分</small>
+              <small>每单元 5 分，上限 30 分；当前 {{ itemScores.agentKnowledge }} 分</small>
             </label>
             <label class="line-input">
-              <span>测试报告（篇）</span>
+              <span>开发复盘/报告（篇）</span>
               <div class="stepper">
-                <input type="number" v-model.number="state.test_report_count" min="0" step="1" />
+                <input type="number" v-model.number="state.agent_report_count" min="0" step="1" />
                 <div class="stepper-buttons">
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('test_report_count', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('test_report_count', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('agent_report_count', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('agent_report_count', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
                 </div>
               </div>
-              <small>每篇 10 分，上限 30 分；当前 {{ itemScores.testReport }} 分</small>
+              <small>每篇 10 分，上限 30 分；当前 {{ itemScores.agentReport }} 分</small>
             </label>
           </fieldset>
         </div>
@@ -147,19 +147,19 @@
         <h3>可选部分（封顶 60 分）</h3>
         <div class="panel-grid optional-grid">
           <fieldset>
-            <legend>三、超额测试单元</legend>
+            <legend>三、超额 Agent 开发单元</legend>
             <label class="line-input">
-              <span>超额测试单元（每组测试或每 30 分钟）</span>
+              <span>超额 Agent 开发单元（每组任务或每 30 分钟）</span>
               <div class="stepper">
-                <input type="number" v-model.number="state.extra_test_units" min="0" step="1" />
+                <input type="number" v-model.number="state.extra_agent_units" min="0" step="1" />
                 <div class="stepper-buttons">
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('extra_test_units', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
-                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('extra_test_units', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('extra_agent_units', 1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">+</button>
+                  <button type="button" class="step-btn" @pointerdown.prevent="startAdjust('extra_agent_units', -1)" @pointerup="stopAdjust" @pointerleave="stopAdjust" @pointercancel="stopAdjust">-</button>
                 </div>
               </div>
               <small>每单元 5 分，计入可选上限 20 分；若必须部分「工作单元」未满 30 分，会优先填满该项</small>
             </label>
-            <p class="cap-note">计入可选部分：{{ itemScores.extraTestOptional }} / 20 分</p>
+            <p class="cap-note">计入可选部分：{{ itemScores.extraAgentOptional }} / 20 分</p>
           </fieldset>
 
           <fieldset>
@@ -317,11 +317,11 @@ const itemScores = computed(() => ({
   englishReview: scores.value.englishReviewScore,
   englishCourse: scores.value.englishCourseScore,
   englishExam: scores.value.englishExamScore,
-  testWork: scores.value.testWorkScore,
-  testExercise: scores.value.testExerciseScore,
-  testKnowledge: scores.value.testKnowledgeScore,
-  testReport: scores.value.testReportScore,
-  extraTestOptional: scores.value.extraTestOptionalScore,
+  agentWork: scores.value.agentWorkScore,
+  agentExercise: scores.value.agentExerciseScore,
+  agentKnowledge: scores.value.agentKnowledgeScore,
+  agentReport: scores.value.agentReportScore,
+  extraAgentOptional: scores.value.extraAgentOptionalScore,
   paintingPractice: state.painting_practice_unit * 10,
   paintingStage: state.painting_stage_unit * 10,
   writingIdeas: state.writing_ideas_done ? 20 : 0,
@@ -347,19 +347,19 @@ const settlementNarrative = computed(() => {
   if (state.english_review) parts.push('复习了旧词')
   if (state.english_course) parts.push('看了一节课程')
   if (state.english_exam_count > 0) parts.push(`练习了${state.english_exam_count}道题`)
-  parts.push(`测试工作单元${state.test_work_units}个`)
-  if (state.test_exercise_groups > 0) {
-    parts.push(`练了${state.test_exercise_groups}组题`)
+  parts.push(`Agent 开发工作单元${state.agent_work_units}个`)
+  if (state.agent_exercise_groups > 0) {
+    parts.push(`练了${state.agent_exercise_groups}组题`)
   } else {
     parts.push('还没有练题，快去')
   }
-  if (state.test_knowledge_units > 0) {
-    parts.push(`知识学习单元${state.test_knowledge_units}个`)
+  if (state.agent_knowledge_units > 0) {
+    parts.push(`知识学习单元${state.agent_knowledge_units}个`)
   } else {
     parts.push('还没有学点东西，快去')
   }
-  if (state.test_report_count > 0) parts.push(`写了${state.test_report_count}篇测试报告`)
-  if (state.extra_test_units > 0) parts.push(`额外测试单元${state.extra_test_units}个`)
+  if (state.agent_report_count > 0) parts.push(`写了${state.agent_report_count}篇开发复盘/报告`)
+  if (state.extra_agent_units > 0) parts.push(`额外 Agent 开发单元${state.extra_agent_units}个`)
   if (state.painting_practice_unit > 0) {
     parts.push(`绘画练习了${state.painting_practice_unit}个单元`)
   }
@@ -393,7 +393,7 @@ function copyScoreSummary() {
     '',
     '【量化统计】',
     `- 英语得分：${scores.value.english}/60`,
-    `- 测试得分：${scores.value.test}/80`,
+    `- AI Agent 开发得分：${scores.value.agent}/80`,
     `- 可选得分：${scores.value.optional}/60`,
     `- 必须部分总分：${mustScore}/140`,
     `- 总分：${scores.value.total}/200`,
@@ -420,11 +420,11 @@ function exportData() {
     `english_review=${state.english_review ? 1 : 0}`,
     `english_course=${state.english_course ? 1 : 0}`,
     `english_exam_count=${state.english_exam_count}`,
-    `test_work_units=${state.test_work_units}`,
-    `test_exercise_groups=${state.test_exercise_groups}`,
-    `test_knowledge_units=${state.test_knowledge_units}`,
-    `test_report_count=${state.test_report_count}`,
-    `extra_test_units=${state.extra_test_units}`,
+    `agent_work_units=${state.agent_work_units}`,
+    `agent_exercise_groups=${state.agent_exercise_groups}`,
+    `agent_knowledge_units=${state.agent_knowledge_units}`,
+    `agent_report_count=${state.agent_report_count}`,
+    `extra_agent_units=${state.extra_agent_units}`,
     `painting_practice_unit=${state.painting_practice_unit}`,
     `painting_stage_unit=${state.painting_stage_unit}`,
     `writing_ideas_done=${state.writing_ideas_done ? 1 : 0}`,
@@ -461,11 +461,11 @@ function doImport() {
   const numberFields = [
     'english_words_groups',
     'english_exam_count',
-    'test_work_units',
-    'test_exercise_groups',
-    'test_knowledge_units',
-    'test_report_count',
-    'extra_test_units',
+    'agent_work_units',
+    'agent_exercise_groups',
+    'agent_knowledge_units',
+    'agent_report_count',
+    'extra_agent_units',
     'painting_practice_unit',
     'painting_stage_unit',
     'writing_draft_unit',
@@ -474,11 +474,11 @@ function doImport() {
   const maxByField = {
     english_words_groups: 3,
     english_exam_count: 6,
-    test_work_units: 99,
-    test_exercise_groups: 6,
-    test_knowledge_units: 6,
-    test_report_count: 3,
-    extra_test_units: 99,
+    agent_work_units: 99,
+    agent_exercise_groups: 6,
+    agent_knowledge_units: 6,
+    agent_report_count: 3,
+    extra_agent_units: 99,
     painting_practice_unit: 99,
     painting_stage_unit: 99,
     writing_draft_unit: 99,

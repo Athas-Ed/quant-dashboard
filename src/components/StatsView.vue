@@ -10,10 +10,10 @@ english_words_groups=2
 english_review=1
 english_course=1
 english_exam_count=3
-test_work_units=4
-test_exercise_groups=2
-test_knowledge_units=3
-test_report_count=1
+agent_work_units=4
+agent_exercise_groups=2
+agent_knowledge_units=3
+agent_report_count=1
 ...
 
 [2026-03-02]
@@ -58,11 +58,11 @@ const seriesOptions = [
   { key: 'total', label: '总分', color: '#1d4ed8' },
   { key: 'must', label: '必须部分', color: '#7c3aed' },
   { key: 'english', label: '英语', color: '#0f766e' },
-  { key: 'test', label: '测试', color: '#ca8a04' },
+  { key: 'test', label: 'AI Agent 开发', color: '#ca8a04' },
   { key: 'optional', label: '可选部分', color: '#dc2626' },
   { key: 'painting', label: '绘画', color: '#db2777' },
   { key: 'writing', label: '文学创作', color: '#059669' },
-  { key: 'testWorkUnits', label: '测试工作单元数', color: '#0369a1' },
+  { key: 'testWorkUnits', label: 'Agent 开发工作单元数', color: '#0369a1' },
   { key: 'wordsCount', label: '背词数量（词）', color: '#65a30d' },
 ]
 
@@ -113,17 +113,17 @@ function calcMetrics(data) {
   const s = computeProgressScores(data)
   const englishWordsGroups = toInt(data.english_words_groups)
   const wordsCount = englishWordsGroups * 20
-  const testWorkUnits = toInt(data.test_work_units)
+  const agentWorkUnits = toInt(data.agent_work_units)
 
   return {
     english: s.english,
-    test: s.test,
+    test: s.agent,
     optional: s.optional,
     painting: s.paintingScore,
     writing: s.writingScore,
     must: s.must,
     total: s.total,
-    testWorkUnits,
+    testWorkUnits: agentWorkUnits,
     wordsCount,
   }
 }

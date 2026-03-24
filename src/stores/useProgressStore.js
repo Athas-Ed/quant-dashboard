@@ -7,11 +7,11 @@ export const DEFAULT_PROGRESS_STATE = {
     english_review: false,
     english_course: false,
     english_exam_count: 0,
-    test_work_units: 0,
-    test_exercise_groups: 0,
-    test_knowledge_units: 0,
-    test_report_count: 0,
-    extra_test_units: 0,
+    agent_work_units: 0,
+    agent_exercise_groups: 0,
+    agent_knowledge_units: 0,
+    agent_report_count: 0,
+    extra_agent_units: 0,
     painting_practice_unit: 0,
     painting_stage_unit: 0,
     writing_ideas_done: false,
@@ -22,11 +22,11 @@ export const DEFAULT_PROGRESS_STATE = {
 const NUMERIC_FIELDS = [
     'english_words_groups',
     'english_exam_count',
-    'test_work_units',
-    'test_exercise_groups',
-    'test_knowledge_units',
-    'test_report_count',
-    'extra_test_units',
+    'agent_work_units',
+    'agent_exercise_groups',
+    'agent_knowledge_units',
+    'agent_report_count',
+    'extra_agent_units',
     'painting_practice_unit',
     'painting_stage_unit',
     'writing_draft_unit',
@@ -65,28 +65,28 @@ export function computeProgressScores(raw) {
     const englishRaw = englishWordsScore + englishExamScore + englishReviewScore + englishCourseScore
     const english = Math.min(englishRaw, 60)
 
-    const regularUnits = s.test_work_units
-    const extraUnits = s.extra_test_units
+    const regularUnits = s.agent_work_units
+    const extraUnits = s.extra_agent_units
     const regularWorkScore = Math.min(regularUnits * 5, 30)
     const needPts = Math.max(0, 30 - regularWorkScore)
     const unitsToFillMust = Math.min(extraUnits, Math.ceil(needPts / 5))
     const extraAfterMust = extraUnits - unitsToFillMust
-    const testWorkScore = Math.min(30, regularWorkScore + unitsToFillMust * 5)
+    const agentWorkScore = Math.min(30, regularWorkScore + unitsToFillMust * 5)
 
-    const testExerciseScore = Math.min(s.test_exercise_groups * 5, 30)
-    const testKnowledgeScore = Math.min(s.test_knowledge_units * 5, 30)
-    const testReportScore = Math.min(s.test_report_count * 10, 30)
-    const testRaw = testWorkScore + testExerciseScore + testKnowledgeScore + testReportScore
-    const test = Math.min(testRaw, 80)
+    const agentExerciseScore = Math.min(s.agent_exercise_groups * 5, 30)
+    const agentKnowledgeScore = Math.min(s.agent_knowledge_units * 5, 30)
+    const agentReportScore = Math.min(s.agent_report_count * 10, 30)
+    const agentRaw = agentWorkScore + agentExerciseScore + agentKnowledgeScore + agentReportScore
+    const agent = Math.min(agentRaw, 80)
 
-    const extraTestOptionalScore = Math.min(extraAfterMust * 5, 20)
+    const extraAgentOptionalScore = Math.min(extraAfterMust * 5, 20)
     const paintingScore = s.painting_practice_unit * 10 + s.painting_stage_unit * 10
     const writingScore =
         (s.writing_ideas_done ? 20 : 0) + s.writing_draft_unit * 30 + s.writing_revise_unit * 20
-    const optionalRaw = extraTestOptionalScore + paintingScore + writingScore
+    const optionalRaw = extraAgentOptionalScore + paintingScore + writingScore
     const optional = Math.min(optionalRaw, 60)
 
-    const must = english + test
+    const must = english + agent
     const total = must + optional
 
     return {
@@ -99,13 +99,13 @@ export function computeProgressScores(raw) {
         regularWorkScore,
         unitsToFillMust,
         extraAfterMust,
-        testWorkScore,
-        testExerciseScore,
-        testKnowledgeScore,
-        testReportScore,
-        testRaw,
-        test,
-        extraTestOptionalScore,
+        agentWorkScore,
+        agentExerciseScore,
+        agentKnowledgeScore,
+        agentReportScore,
+        agentRaw,
+        agent,
+        extraAgentOptionalScore,
         paintingScore,
         writingScore,
         optionalRaw,
